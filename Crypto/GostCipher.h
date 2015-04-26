@@ -49,14 +49,7 @@ typedef struct gost_s_box
 
 typedef struct gost_kds
 {
-	gst_udword X0;
-	gst_udword X1;
-	gst_udword X2;
-	gst_udword X3;
-	gst_udword X4;
-	gst_udword X5;
-	gst_udword X6;
-	gst_udword X7;
+	gst_udword gostroundkey[7];
 #ifdef GOST_DYNAMIC_SBOXES
 	gost_s_box sbox;
 #else
