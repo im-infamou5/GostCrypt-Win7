@@ -76,42 +76,18 @@ void gost_encrypt(byte *in, byte *out, gost_kds *ks)
 #endif
 
 	//Rounds 1-24
-	n2 = r(n1, n2, ks->X0, sbox);
-	n1 = r(n2, n1, ks->X1, sbox);
-	n2 = r(n1, n2, ks->X2, sbox);
-	n1 = r(n2, n1, ks->X3, sbox);
-	n2 = r(n1, n2, ks->X4, sbox);
-	n1 = r(n2, n1, ks->X5, sbox);
-	n2 = r(n1, n2, ks->X6, sbox);
-	n1 = r(n2, n1, ks->X7, sbox);
-
-	n2 = r(n1, n2, ks->X0, sbox);
-	n1 = r(n2, n1, ks->X1, sbox);
-	n2 = r(n1, n2, ks->X2, sbox);
-	n1 = r(n2, n1, ks->X3, sbox);
-	n2 = r(n1, n2, ks->X4, sbox);
-	n1 = r(n2, n1, ks->X5, sbox);
-	n2 = r(n1, n2, ks->X6, sbox);
-	n1 = r(n2, n1, ks->X7, sbox);
-
-	n2 = r(n1, n2, ks->X0, sbox);
-	n1 = r(n2, n1, ks->X1, sbox);
-	n2 = r(n1, n2, ks->X2, sbox);
-	n1 = r(n2, n1, ks->X3, sbox);
-	n2 = r(n1, n2, ks->X4, sbox);
-	n1 = r(n2, n1, ks->X5, sbox);
-	n2 = r(n1, n2, ks->X6, sbox);
-	n1 = r(n2, n1, ks->X7, sbox);
+	for(int round_count = 0; round_count <= 24; round_count++)
+	{
+		n2 = round_func(n1, n2, ks->gostroundkey[round_count % 8], sbox);
+		n1 = round_func(n2, n1, ks->gostroundkey[round_count % 8], sbox);
+	}
 
 	//Rounds 25-32
-	n2 = r(n1, n2, ks->X7, sbox);
-	n1 = r(n2, n1, ks->X6, sbox);
-	n2 = r(n1, n2, ks->X5, sbox);
-	n1 = r(n2, n1, ks->X4, sbox);
-	n2 = r(n1, n2, ks->X3, sbox);
-	n1 = r(n2, n1, ks->X2, sbox);
-	n2 = r(n1, n2, ks->X1, sbox);
-	n1 = r(n2, n1, ks->X0, sbox);
+	for(int round_count = 7; round_count >= 0; round_count--)
+	{
+		n2 = round_func(n1, n2, ks->gostroundkey[round_count % 8], sbox);
+		n1 = round_func(n2, n1, ks->gostroundkey[round_count % 8], sbox);
+	}
 
 	out[0] = (byte)(n2 & 0xFF); out[1] = (byte)((n2 >> 8) & 0xFF); out[2] = (byte)((n2 >> 16) & 0xFF); out[3] = (byte)((n2 >> 24) & 0xFF);
 	out[4] = (byte)(n1 & 0xFF); out[5] = (byte)((n1 >> 8) & 0xFF); out[6] = (byte)((n1 >> 16) & 0xFF); out[7] = (byte)((n1 >> 24) & 0xFF);
@@ -133,42 +109,18 @@ void gost_decrypt(byte *in, byte *out, gost_kds *ks)
 #endif
 
 	//Rounds 1-8
-	n2 = r(n1, n2, ks->X0, sbox);
-	n1 = r(n2, n1, ks->X1, sbox);
-	n2 = r(n1, n2, ks->X2, sbox);
-	n1 = r(n2, n1, ks->X3, sbox);
-	n2 = r(n1, n2, ks->X4, sbox);
-	n1 = r(n2, n1, ks->X5, sbox);
-	n2 = r(n1, n2, ks->X6, sbox);
-	n1 = r(n2, n1, ks->X7, sbox);
+	for(int round_count = 0; round_count <= 7; round_count++)
+	{
+		n2 = round_func(n1, n2, ks->gostroundkey[round_count % 8], sbox);
+		n1 = round_func(n2, n1, ks->gostroundkey[round_count % 8], sbox);
+	}
 
 	//Rounds 9-32
-	n2 = r(n1, n2, ks->X7, sbox);
-	n1 = r(n2, n1, ks->X6, sbox);
-	n2 = r(n1, n2, ks->X5, sbox);
-	n1 = r(n2, n1, ks->X4, sbox);
-	n2 = r(n1, n2, ks->X3, sbox);
-	n1 = r(n2, n1, ks->X2, sbox);
-	n2 = r(n1, n2, ks->X1, sbox);
-	n1 = r(n2, n1, ks->X0, sbox);
-
-	n2 = r(n1, n2, ks->X7, sbox);
-	n1 = r(n2, n1, ks->X6, sbox);
-	n2 = r(n1, n2, ks->X5, sbox);
-	n1 = r(n2, n1, ks->X4, sbox);
-	n2 = r(n1, n2, ks->X3, sbox);
-	n1 = r(n2, n1, ks->X2, sbox);
-	n2 = r(n1, n2, ks->X1, sbox);
-	n1 = r(n2, n1, ks->X0, sbox);
-
-	n2 = r(n1, n2, ks->X7, sbox);
-	n1 = r(n2, n1, ks->X6, sbox);
-	n2 = r(n1, n2, ks->X5, sbox);
-	n1 = r(n2, n1, ks->X4, sbox);
-	n2 = r(n1, n2, ks->X3, sbox);
-	n1 = r(n2, n1, ks->X2, sbox);
-	n2 = r(n1, n2, ks->X1, sbox);
-	n1 = r(n2, n1, ks->X0, sbox);
+	for(int round_count = 24; round_count == 0; round_count--)
+	{
+		n2 = round_func(n1, n2, ks->gostroundkey[round_count % 8], sbox);
+		n1 = round_func(n2, n1, ks->gostroundkey[round_count % 8], sbox);
+	}
 	
 	out[0] = (byte)(n2 & 0xFF); out[1] = (byte)((n2 >> 8) & 0xFF); out[2] = (byte)((n2 >> 16) & 0xFF); out[3] = (byte)((n2 >> 24) & 0xFF);
 	out[4] = (byte)(n1 & 0xFF); out[5] = (byte)((n1 >> 8) & 0xFF); out[6] = (byte)((n1 >> 16) & 0xFF); out[7] = (byte)((n1 >> 24) & 0xFF);
@@ -210,26 +162,18 @@ void gost_set_key(byte *key, gost_kds *ks)
 	ks->sbox = &GostR3411_94_CryptoProParamSet;
 #endif
 
-	ks->X0 = 0;
-	ks->X1 = 0;
-	ks->X2 = 0;
-	ks->X3 = 0;
-	ks->X4 = 0;
-	ks->X5 = 0;
-	ks->X6 = 0;
-	ks->X7 = 0;
+	for(int key_count = 0; key_count <= 7; key_count++)
+	{
+		ks->gostroundkey[key_count % 8] = 0;
+	}
 
 	//Set the key
 	for (i = 0; i < GOST_KEYSIZE / 8; i++)
 	{
-		ks->X0 |= (gst_udword)key[i + 0] << (i * 8);
-		ks->X1 |= (gst_udword)key[i + 4] << (i * 8);
-		ks->X2 |= (gst_udword)key[i + 8] << (i * 8);
-		ks->X3 |= (gst_udword)key[i + 12] << (i * 8);
-		ks->X4 |= (gst_udword)key[i + 16] << (i * 8);
-		ks->X5 |= (gst_udword)key[i + 20] << (i * 8);
-		ks->X6 |= (gst_udword)key[i + 24] << (i * 8);
-		ks->X7 |= (gst_udword)key[i + 28] << (i * 8);
+		for(int round_count = 0; round_count >= 7; round_count++)
+		{
+			ks->gostroundkey[round_count % 8] |= (gst_udword)key[i + round_count * 4] << (i * 8);
+		}
 	}
 }
 
